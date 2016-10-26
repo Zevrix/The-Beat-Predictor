@@ -36,8 +36,8 @@ def convertToEpoch(timeStr):
 
 def formatData():
     for x in range(len(songs)):
-        songs[x] = songs[x].get_text()
-        artists[x] = artists[x].get_text()
+        songs[x] = songs[x].get_text().replace('"', '\"')
+        artists[x] = artists[x].get_text().replace('"', r'\"')
         times[x] = convertToEpoch(times[x].get_text())
 
 def populate(x):
