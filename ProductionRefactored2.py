@@ -60,8 +60,6 @@ def main():
         if songs[x] not in currSongs:
             populate(x)
 
-    cur.execute("DELETE FROM songs")
-    db.commit()
     db.close()
 
 
