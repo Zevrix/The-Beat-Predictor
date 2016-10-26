@@ -2,9 +2,10 @@ from bs4 import BeautifulSoup
 import urllib.request
 import datetime
 import time
-import _mysql
+import MySQLdb
 
-db=_mysql.connect("localhost","root","root","Predictor")
+db = MySQLdb.connect(host="localhost", user="root", passwd="root", db="Predictor")
+cur = db.cursor()
 
 response = urllib.request.urlopen('http://indie88.com/music/song-history')
 html = response.read()
@@ -14,6 +15,8 @@ soup = BeautifulSoup(html, 'html.parser')
 songs = soup.findAll("div", { "class" : "recently-played-song" })
 artists = soup.findAll("div", { "class" : "recently-played-artist" })
 times = soup.findAll("div", { "class" : "recently-played-time" })
+
+currSongs = []
 
 def convertToEpoch(timeStr):
     start = timeStr.index(":")+1
@@ -41,5 +44,9 @@ def formatData():
 
 def main():
     formatData()
-
+    cur.execute("SELECT song_name FROM test")
+    for x in cur.fetchall():
+        currSongs.append(x)
+    print(currSongs)
+    
 main()
