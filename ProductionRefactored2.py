@@ -2,6 +2,9 @@ from bs4 import BeautifulSoup
 import urllib.request
 import datetime
 import time
+import _mysql
+
+db=_mysql.connect("localhost","root","root","Predictor")
 
 response = urllib.request.urlopen('http://indie88.com/music/song-history')
 html = response.read()
