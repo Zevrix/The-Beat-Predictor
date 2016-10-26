@@ -41,15 +41,23 @@ def formatData():
         times[x] = convertToEpoch(times[x].get_text())
         print(songs[x], artists[x], times[x])
 
+def populate(x):
+    sql = "INSERT INTO songs (song_artist, song_name, predict_time, first_play, last_play, plays) VALUES ("+artists[x]+","+songs[x]+","+", 0,"+times[x]+","+times[x]+")"
+    cur.execute(sql)
 
 def main():
     formatData()
-    cur.execute("SELECT song_name FROM test")
-    data = cur.fetchall()
-    print(data)
-    for x in data:
-        print(x)
+    cur.execute("SELECT song_name FROM songs")
+    for x in cur.fetchall():
         currSongs.append(x)
-    print(currSongs)
+
+    for x in range(len(songs)):
+        if songs[x] not in currSongs:
+            populate(x)
+
+    cur.execute("SELECT * FROM songs")
+    print(cur.fetchall())
+
+
 
 main()
