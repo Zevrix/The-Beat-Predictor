@@ -47,19 +47,22 @@ def populate(x):
     cur.execute(sql)
     db.commit()
 
+
 def main():
     formatData()
     cur.execute("SELECT song_name FROM songs")
     for x in cur.fetchall():
-        currSongs.append(x)
+        currSongs.append(x[0])
+
+    print(currSongs)
 
     for x in range(len(songs)):
         if songs[x] not in currSongs:
             populate(x)
 
-    cur.execute("SELECT * FROM songs")
-    print(cur.fetchall())
-
+    cur.execute("DELETE * FROM songs")
+    db.commit()
+    db.close()
 
 
 main()
