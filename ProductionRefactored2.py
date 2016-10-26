@@ -23,7 +23,7 @@ def convertToEpoch(timeStr):
     if len(hour) == 1:
         hour = "0"+hour
     now = datetime.datetime.now()
-    dateTime = now.day+now.month+now.year+hour+minute
+    dateTime = str(now.day)+str(now.month)+str(now.year)+hour+minute
     pattern = '%d%m%Y%H%M'
     epoch = int(time.mktime(time.strptime(dateTime, pattern)))
     return epoch
