@@ -1,5 +1,7 @@
 from bs4 import BeautifulSoup
 import urllib.request
+import datetime
+import time
 
 response = urllib.request.urlopen('http://indie88.com/music/song-history')
 html = response.read()
@@ -20,11 +22,15 @@ def convertToEpoch(timeStr):
         hour = str(int(timeStr[-7:-5])+12)
     if len(hour) == 1:
         hour = "0"+hour
-    return hour+":"+minute
+    now = datetime.datetime.now()
+    dateTime = now.day+now.month+now.year+hour+minute
+    pattern = '%d%m%Y%H%M'
+    epoch = int(time.mktime(time.strptime(dateTime, pattern))
+    return epoch
 
 
 for x in range(len(songs)):
     songs[x] = songs[x].get_text()
     artists[x] = artists[x].get_text()
-    times[x] = convertToEpoch(times[x].get_text())
-    print(songs[x], artists[x], times[x])
+    epochTimes.append(convertToEpoch(times[x].get_text()))
+    print(songs[x], artists[x], times[x], epochTimes[x])
