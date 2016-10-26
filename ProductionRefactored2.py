@@ -54,7 +54,7 @@ def main():
     for x in cur.fetchall():
         currSongs.append(x[0])
 
-    cur.exectue("SELECT last_play FROM songs ORDER BY last_play DESC;")
+    cur.execute("SELECT last_play FROM songs ORDER BY last_play DESC;")
     timeLimit = cur.fetchall()[0][0]
 
     print(timeLimit)
