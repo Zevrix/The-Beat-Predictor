@@ -42,7 +42,7 @@ def formatData():
         print(songs[x], artists[x], times[x])
 
 def populate(x):
-    sql = "INSERT INTO songs (song_artist, song_name, predict_time, first_play, last_play, plays) VALUES ("+artists[x]+","+songs[x]+","+", 0,"+str(times[x])+","+str(times[x])+")"
+    sql = "INSERT INTO songs (song_artist, song_name, predict_time, first_play, last_play, plays) VALUES ("+artists[x]+","+songs[x]+",0,"+str(times[x])+","+str(times[x])+",1)"
     cur.execute(sql)
 
 def main():
