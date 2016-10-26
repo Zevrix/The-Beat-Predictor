@@ -46,6 +46,10 @@ def populate(x):
     cur.execute(sql)
     db.commit()
 
+def update(x):
+    cur.execute("SELECT * FROM songs WHERE song_name = \'"+songs[x]+"\';")
+    data = cur.fetchall()
+    print(data)
 
 def main():
     formatData()
@@ -57,11 +61,11 @@ def main():
     cur.execute("SELECT last_play FROM songs ORDER BY last_play DESC;")
     timeLimit = cur.fetchall()[0][0]
 
-    print(timeLimit)
-
     for x in range(len(songs)):
         if songs[x] not in currSongs:
             populate(x)
+        elif times[x] < timeLimit:
+            update(x)
 
     db.close()
 
