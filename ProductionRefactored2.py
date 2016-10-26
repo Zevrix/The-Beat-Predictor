@@ -39,7 +39,6 @@ def formatData():
         songs[x] = songs[x].get_text()
         artists[x] = artists[x].get_text()
         times[x] = convertToEpoch(times[x].get_text())
-        print(songs[x], artists[x], times[x])
 
 def populate(x):
     sql = "INSERT INTO songs (song_artist, song_name, predict_time, first_play, last_play, plays) VALUES (\'"+artists[x]+"\',\'"+songs[x]+"\',0,"+str(times[x])+","+str(times[x])+",1);"
@@ -68,6 +67,7 @@ def main():
     cur.execute("SELECT last_play FROM songs ORDER BY last_play DESC;")
     data = cur.fetchall()
 
+    print(data)
     if data != ():
         timeLimit = cur.fetchall()[0][0]
     else:
