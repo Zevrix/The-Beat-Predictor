@@ -8,6 +8,7 @@ soup = BeautifulSoup(html, 'html.parser')
 
 print(soup.prettify())
 
-mydivs = soup.findAll("div", { "class" : "recently-played-item" })
+mydivs = soup.findAll("div", { "class" : "recently-played-song" })
 
-print(mydivs)
+for x in mydivs:
+    print(x)
