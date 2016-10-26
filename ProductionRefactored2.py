@@ -45,7 +45,9 @@ def formatData():
 def main():
     formatData()
     cur.execute("SELECT song_name FROM test")
-    for x in cur.fetchall():
+    data = cur.fetchall()
+    print(data)
+    for x in data:
         print(x)
         currSongs.append(x)
     print(currSongs)
