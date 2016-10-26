@@ -67,9 +67,8 @@ def main():
     cur.execute("SELECT last_play FROM songs ORDER BY last_play DESC;")
     data = cur.fetchall()
 
-    print(data)
     if data != ():
-        timeLimit = cur.fetchall()[0][0]
+        timeLimit = data[0][0]
     else:
         timeLimit = 0
 
