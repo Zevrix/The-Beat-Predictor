@@ -43,18 +43,21 @@ def formatData():
 
 def populate(x):
     sql = "INSERT INTO songs (song_artist, song_name, predict_time, first_play, last_play, plays) VALUES (\'"+artists[x]+"\',\'"+songs[x]+"\',0,"+str(times[x])+","+str(times[x])+",1);"
-    print(sql)
     cur.execute(sql)
     db.commit()
 
 
 def main():
     formatData()
-    cur.execute("SELECT song_name FROM songs")
+    cur.execute("SELECT song_name FROM songs;")
+
     for x in cur.fetchall():
         currSongs.append(x[0])
 
-    print(currSongs)
+    cur.exectue("SELECT last_play FROM songs ORDER BY last_play DESC;")
+    timeLimit = cur.fetchall()[0][0]
+
+    print(timeLimit)
 
     for x in range(len(songs)):
         if songs[x] not in currSongs:
