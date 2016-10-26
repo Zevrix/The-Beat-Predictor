@@ -11,7 +11,6 @@ soup = BeautifulSoup(html, 'html.parser')
 songs = soup.findAll("div", { "class" : "recently-played-song" })
 artists = soup.findAll("div", { "class" : "recently-played-artist" })
 times = soup.findAll("div", { "class" : "recently-played-time" })
-epochTimes = []
 
 def convertToEpoch(timeStr):
     start = timeStr.index(":")+1
@@ -32,5 +31,5 @@ def convertToEpoch(timeStr):
 for x in range(len(songs)):
     songs[x] = songs[x].get_text()
     artists[x] = artists[x].get_text()
-    epochTimes.append(convertToEpoch(times[x].get_text()))
-    print(songs[x], artists[x], times[x], epochTimes[x])
+    times[x] = convertToEpoch(times[x].get_text())
+    print(songs[x], artists[x], times[x])
