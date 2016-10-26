@@ -50,7 +50,7 @@ def update(x):
     data = cur.fetchall()
 
     new_plays = data[0][6]+1
-    new_predict = int((times[x]-data[0][4])/new_plays)
+    new_predict = int((times[x]-data[0][4])/new_plays + times[x])
     new_last_play = times[x]
 
     sql = "UPDATE songs SET plays="+str(new_plays)+", predict_time ="+str(new_predict)+",last_play="+str(new_last_play)+" WHERE song_name = \'"+songs[x]+"\';"
@@ -63,9 +63,9 @@ def predict():
     now = time.time()
 
     for x in data:
-        if x[1] < now + 100 or x[1] > now - 100:
+        if x[1] < (now + 100) or x[1] > (now - 100):
             print(x[0])
-            
+
 def main():
     formatData()
     cur.execute("SELECT song_name FROM songs;")
