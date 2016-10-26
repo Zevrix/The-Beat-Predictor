@@ -17,7 +17,7 @@ artists = soup.findAll("div", { "class" : "recently-played-artist" })
 times = soup.findAll("div", { "class" : "recently-played-time" })
 
 currSongs = []
-
+" 12:42PM"
 def convertToEpoch(timeStr):
     start = timeStr.index(":")+1
     timeStr = timeStr[start:]
@@ -27,6 +27,11 @@ def convertToEpoch(timeStr):
         hour = str(int(timeStr[-7:-5])+12)
     if len(hour) == 1:
         hour = "0"+hour
+    elif hour == "24":
+        hour = "12"
+    elif hour == "12" and timeStr[-2] == "A":
+        hour = "00"
+        
     now = datetime.datetime.now()
     dateTime = str(now.day)+str(now.month)+str(now.year)+hour+minute
     pattern = '%d%m%Y%H%M'
