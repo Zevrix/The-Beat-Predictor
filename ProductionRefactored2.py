@@ -88,7 +88,7 @@ def main():
     for x in range(len(songs)):
         if songs[x] not in currSongs:
             populate(x)
-        elif times[x] < timeLimit:
+        elif times[x] > timeLimit:
             update(x)
 
     predict()
