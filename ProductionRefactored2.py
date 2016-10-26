@@ -49,7 +49,14 @@ def populate(x):
 def update(x):
     cur.execute("SELECT * FROM songs WHERE song_name = \'"+songs[x]+"\';")
     data = cur.fetchall()
-    print(data)
+
+    new_plays = data[0][6]+1
+    new_predict = int((times[x]-data[0][4])/new_plays)
+    new_last_play = times[x]
+
+    sql = "UPDATE songs SET plays="+str(new_plays)+", predict_time ="+str(new_predict)+",last_play="+str(new_last_play)+" WHERE song_name = \'"+songs[x]+"\';"
+    cur.execute(sql)
+    db.commit()
 
 def main():
     formatData()
@@ -59,12 +66,17 @@ def main():
         currSongs.append(x[0])
 
     cur.execute("SELECT last_play FROM songs ORDER BY last_play DESC;")
-    timeLimit = cur.fetchall()[0][0]
+    data = cur.fetchall()
+
+    if data != None:
+        timeLimit = cur.fetchall()[0][0]
+    else:
+        timeLimit = 0
 
     for x in range(len(songs)):
         if songs[x] not in currSongs:
             populate(x)
-        elif times[x] < timeLimit:
+        elif times[x] > timeLimit:
             update(x)
 
     db.close()
