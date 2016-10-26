@@ -11,6 +11,7 @@ artists = soup.findAll("div", { "class" : "recently-played-artist" })
 times = soup.findAll("div", { "class" : "recently-played-time" })
 
 for x in range(len(songs)):
-    print(songs[x])
-    print(artists[x])
-    print(times[x])
+    songs[x] = songs[x].get_text()
+    artists[x] = artists[x].get_text()
+    times[x] = times[x].get_text()
+    print(songs[x], artists[x], times[x])
