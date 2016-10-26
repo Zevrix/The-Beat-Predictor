@@ -61,6 +61,7 @@ def predict():
     cur.execute("SELECT song_name, predict_time FROM songs;")
     data = cur.fetchall()
     now = time.time()
+    print(now)
     print(data)
     for x in data:
         if x[1] < (now + 100) or x[1] > (now - 100):
