@@ -28,8 +28,15 @@ def convertToEpoch(timeStr):
     return epoch
 
 
-for x in range(len(songs)):
-    songs[x] = songs[x].get_text()
-    artists[x] = artists[x].get_text()
-    times[x] = convertToEpoch(times[x].get_text())
-    print(songs[x], artists[x], times[x])
+def formatData():
+    for x in range(len(songs)):
+        songs[x] = songs[x].get_text()
+        artists[x] = artists[x].get_text()
+        times[x] = convertToEpoch(times[x].get_text())
+        print(songs[x], artists[x], times[x])
+
+
+def main():
+    formatData()
+
+main()
