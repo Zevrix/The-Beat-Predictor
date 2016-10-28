@@ -21,6 +21,7 @@ currSongs = []
 def convertToEpoch(timeStr):
     start = timeStr.index(":")+1
     timeStr = timeStr[start:]
+    print(timeStr)
     hour = ""
     minute = timeStr[-4:-2]
     if timeStr[-2] == "P":
