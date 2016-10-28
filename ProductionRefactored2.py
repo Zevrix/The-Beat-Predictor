@@ -31,7 +31,7 @@ def convertToEpoch(timeStr):
         hour = "12"
     elif hour == "12" and timeStr[-2] == "A":
         hour = "00"
-        
+    print(hour+" "+minute)
     now = datetime.datetime.now()
     dateTime = str(now.day)+str(now.month)+str(now.year)+hour+minute
     pattern = '%d%m%Y%H%M'
