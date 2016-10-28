@@ -43,7 +43,6 @@ def formatData():
         songs[x] = songs[x].get_text().replace('"', '\\"').replace("'", "\\'")
         artists[x] = artists[x].get_text().replace('"', '\\"').replace("'", "\\'")
         times[x] = convertToEpoch(times[x].get_text())
-        print(songs[x], artists[x], times[x])
 
 def populate(x):
     sql = "INSERT INTO songs (song_artist, song_name, predict_time, first_play, last_play, plays) VALUES (\'"+artists[x]+"\',\'"+songs[x]+"\',0,"+str(times[x])+","+str(times[x])+",1);"
