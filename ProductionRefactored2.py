@@ -75,7 +75,7 @@ def predict():
             
 def insertIntoPlays(x):
     song_id = findIDBySongName(songs[x])
-    sql = "INSERT INTO plays (song_id, song_time) VALUES ("+song_id+", "+str(times[x])+");"
+    sql = "INSERT INTO plays (song_id, song_time) VALUES ("+str(song_id)+", "+str(times[x])+");"
     cur.execute(sql)
     db.commit()
             
