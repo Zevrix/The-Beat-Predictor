@@ -77,7 +77,7 @@ def predict():
             print(x[0])
             
 def findIDBySongName(name):
-    cur.execute("SELECT id FROM songs WHERE song_name = \'"+name"\';")
+    cur.execute("SELECT id FROM songs WHERE song_name = \'"+name+"\';")
     data = cur.fetchall()
     
     if data == ():
