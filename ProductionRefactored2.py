@@ -22,10 +22,10 @@ def convertToEpoch(timeStr):
     start = timeStr.index(":")+1
     timeStr = timeStr[start:]
     print(timeStr)
-    hour = ""
+    hour = timeStr[-7:-5]
     minute = timeStr[-4:-2]
     if timeStr[-2] == "P":
-        hour = str(int(timeStr[-7:-5])+12)
+        hour = str(int(hour)+12)
     if len(hour) == 1:
         hour = "0"+hour
     elif hour == "24":
