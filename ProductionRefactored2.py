@@ -49,6 +49,12 @@ def populate(x):
     sql = "INSERT INTO songs (song_artist, song_name, predict_time, first_play, last_play, plays) VALUES (\'"+artists[x]+"\',\'"+songs[x]+"\',0,"+str(times[x])+","+str(times[x])+",1);"
     cur.execute(sql)
     db.commit()
+    """
+    song_id = findIDBySongName(songs[x])
+    sql = "INSERT INTO plays (song_id, song_time) VALUES ("+song_id+", "+str(times[x])+");"
+    cur.execute(sql)
+    db.commit()
+    """
 
 def update(x):
     cur.execute("SELECT * FROM songs WHERE song_name = \'"+songs[x]+"\';")
@@ -67,9 +73,19 @@ def predict():
     data = cur.fetchall()
     now = time.time()
     for x in data:
-        if x[1] < (now + 100) and x[1] > (now - 100):
+        if x[1] < (now + 3600) and x[1] > (now - 3600):
             print(x[0])
-
+            
+def findIDBySongName(name):
+    cur.execute("SELECT id FROM songs WHERE song_name = \'"+name"\';")
+    data = cur.fetchall()
+    
+    if data == ():
+        print("Error: Song name not in songs table.")
+        return 0
+    else:
+        return data[0][0]
+    
 def main():
     formatData()
     cur.execute("SELECT song_name FROM songs;")
