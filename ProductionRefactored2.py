@@ -17,7 +17,7 @@ artists = soup.findAll("div", { "class" : "recently-played-artist" })
 times = soup.findAll("div", { "class" : "recently-played-time" })
 
 currSongs = []
-" 12:42PM"
+
 def convertToEpoch(timeStr):
     start = timeStr.index(":")+1
     timeStr = timeStr[start:]
@@ -85,7 +85,8 @@ def main():
         timeLimit = data[0][0]
     else:
         timeLimit = 0
-
+        
+    print(timeLimit)
     for x in range(len(songs)):
         if songs[x] not in currSongs:
             populate(x)
