@@ -69,7 +69,7 @@ def predict():
     data = cur.fetchall()
     now = time.time()
     for x in data:
-        if x[1] < (now + 3600) and x[1] > (now - 3600):
+        if x[1] < (now + 1800) and x[1] > (now - 1800):
             print(x[0])
             
 def insertIntoPlays(x):
