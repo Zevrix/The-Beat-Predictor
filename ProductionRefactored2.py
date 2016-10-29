@@ -3,6 +3,7 @@ import urllib.request
 import datetime
 import time
 import MySQLdb
+import subprocess
 
 db = MySQLdb.connect(host="localhost", user="root", passwd="root", db="Predictor")
 cur = db.cursor()
@@ -65,12 +66,13 @@ def update(x):
     insertIntoPlays(x)
 
 def predict():
-    cur.execute("SELECT song_name, predict_time FROM songs;")
+    cur.execute("SELECT song_name, song_artist, predict_time FROM songs;")
     data = cur.fetchall()
     now = time.time()
     for x in data:
-        if x[1] < (now + 1800) and x[1] > (now - 1800):
-            print(x[0])
+        if x[2] < (now + 1800) and x[2] > (now - 1800):
+            print(x[0], x[1])
+            subprocess.call('sh ~/slack.sh \"'+x[0]+'\" \"'+x[1]+'\"', shell=True)
             
 def insertIntoPlays(x):
     song_id = findIDBySongName(songs[x])
