@@ -1,28 +1,121 @@
-import urllib2
+from bs4 import BeautifulSoup
+import urllib.request
+import datetime
+import time
+import MySQLdb
+import subprocess
 
-response = urllib2.urlopen('http://indie88.com/music/song-history')
+db = MySQLdb.connect(host="localhost", user="root", passwd="root", db="Predictor")
+cur = db.cursor()
+
+response = urllib.request.urlopen('http://indie88.com/music/song-history')
 html = response.read()
 
-start = html.index('class="recently-played"')
-end = html.index('class="recently-played-back"')
+soup = BeautifulSoup(html, 'html.parser')
 
-html = html[start:end]
+songs = soup.findAll("div", { "class" : "recently-played-song" })
+artists = soup.findAll("div", { "class" : "recently-played-artist" })
+times = soup.findAll("div", { "class" : "recently-played-time" })
 
-songData = {}
+currSongs = []
+
+def convertToEpoch(timeStr):
+    start = timeStr.index(":")+1
+    timeStr = timeStr[start:]
+    hour = timeStr[-7:-5]
+    minute = timeStr[-4:-2]
+    if timeStr[-2] == "P":
+        hour = str(int(hour)+12)
+    if len(hour) == 1:
+        hour = "0"+hour
+    elif hour == "24":
+        hour = "12"
+    elif hour == "12" and timeStr[-2] == "A":
+        hour = "00"
+    now = datetime.datetime.now()
+    dateTime = str(now.day)+str(now.month)+str(now.year)+hour+minute
+    pattern = '%d%m%Y%H%M'
+    epoch = int(time.mktime(time.strptime(dateTime, pattern)))
+    return epoch
 
 
-def getSongHTML(html):
-    while 'class="recently-played-item"' in html:
-        start = html.index('class="recently-played-song"')
-        end = html.index('class=\"recently-played-buy-link')
-        getSongData(html[start:end])
-        getSongHTML(html[end:])
+def formatData():
+    for x in range(len(songs)):
+        songs[x] = songs[x].get_text().replace('"', '\\"').replace("'", "\\'")
+        artists[x] = artists[x].get_text().replace('"', '\\"').replace("'", "\\'")
+        times[x] = convertToEpoch(times[x].get_text())
 
-def getSongData(songHTML):
-    songName = songHTML[songHTML.index(">")+1:songHTML.index("<")]
-    songData[songName] = 0
+def populate(x):
+    sql = "INSERT INTO songs (song_artist, song_name, predict_time, first_play, last_play, plays) VALUES (\'"+artists[x]+"\',\'"+songs[x]+"\',0,"+str(times[x])+","+str(times[x])+",1);"
+    cur.execute(sql)
+    db.commit()
+    insertIntoPlays(x)
 
 
-getSongHTML(html)
+def update(x):
+    cur.execute("SELECT * FROM songs WHERE song_name = \'"+songs[x]+"\';")
+    data = cur.fetchall()
 
-print(songData)
+    new_plays = data[0][6]+1
+    new_predict = int((times[x]-data[0][4])/data[0][6] + times[x])
+    new_last_play = times[x]
+
+    sql = "UPDATE songs SET plays="+str(new_plays)+", predict_time ="+str(new_predict)+",last_play="+str(new_last_play)+" WHERE song_name = \'"+songs[x]+"\';"
+    cur.execute(sql)
+    db.commit()
+    insertIntoPlays(x)
+
+def predict():
+    cur.execute("SELECT song_name, song_artist, predict_time FROM songs;")
+    data = cur.fetchall()
+    now = time.time()
+    for x in data:
+        if x[2] < (now + 1800) and x[2] > (now - 1800):
+            pStr = time.strftime("%H:%M", time.localtime(x[2]))
+            print(x[0],x[1],pStr)
+            subprocess.call('sh ~/slack.sh \"'+x[0]+'\" \"'+x[1]+'\" \"'+pStr+'\"', shell=True)
+            
+def insertIntoPlays(x):
+    song_id = findIDBySongName(songs[x])
+    sql = "INSERT INTO plays (song_id, song_time) VALUES ("+str(song_id)+", "+str(times[x])+");"
+    cur.execute(sql)
+    db.commit()
+            
+def findIDBySongName(name):
+    cur.execute("SELECT id FROM songs WHERE song_name = \'"+name+"\';")
+    data = cur.fetchall()
+    
+    if data == ():
+        print("Error: Song name not in songs table.")
+        return 0
+    else:
+        return data[0][0]
+    
+    
+def main():
+    formatData()
+    cur.execute("SELECT song_name FROM songs;")
+
+    for x in cur.fetchall():
+        currSongs.append(x[0].replace('"', '\\"').replace("'", "\\'"))
+
+    cur.execute("SELECT last_play FROM songs ORDER BY last_play DESC;")
+    data = cur.fetchall()
+
+    if data != ():
+        timeLimit = data[0][0]
+    else:
+        timeLimit = 0
+        
+    for x in range(len(songs)):
+        if songs[x] not in currSongs:
+            populate(x)
+        elif times[x] > timeLimit:
+            update(x)
+
+    predict()
+
+    db.close()
+
+
+main()
