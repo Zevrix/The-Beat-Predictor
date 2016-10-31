@@ -84,9 +84,9 @@ def insertIntoPlays(x):
     db.commit()
 
 def outputToSlack(songName, playTime, predictTime):
-    playTime = time.strftime("%H:%M", time.localtime(playTime))
+    playTime = time.strftime("%d %b %H:%M", time.localtime(playTime))
     if predictTime != 0:
-        predictTime = time.strftime("%H:%M", time.localtime(predictTime))
+        predictTime = time.strftime("%d %b %H:%M", time.localtime(predictTime))
     else:
         predictTime = "NULL"
     subprocess.call('sh ~/The-Beat-Predictor/plays.sh \"'+songName+'\" \"'+playTime+'\" \"'+predictTime+'\"', shell=True)
