@@ -73,7 +73,7 @@ def predict():
         if x[2] < (now + 1800) and x[2] > (now - 1800):
             pStr = time.strftime("%H:%M", time.localtime(x[2]))
             print(x[0],x[1],pStr)
-            subprocess.call('sh ~/slack.sh \"'+x[0]+'\" \"'+x[1]+'\" \"'+pStr+'\"', shell=True)
+            subprocess.call('sh ~/The-Beat-Predictor/slack.sh \"'+x[0]+'\" \"'+x[1]+'\" \"'+pStr+'\"', shell=True)
             
 def insertIntoPlays(x):
     song_id = findIDBySongName(songs[x])
@@ -104,9 +104,13 @@ def main():
 
     if data != ():
         timeLimit = data[0][0]
+        for x in range(len(times)):
+            if times[x]-timeLimit > 80000:
+                times[x] -= 86400    
     else:
         timeLimit = 0
-        
+    
+    print(timeLimit)
     for x in range(len(songs)):
         if songs[x] not in currSongs:
             populate(x)
