@@ -55,7 +55,7 @@ def populate(x):
 def update(x):
     cur.execute("SELECT * FROM songs WHERE song_name = \'"+songs[x]+"\';")
     data = cur.fetchall()
-
+    ouputToSlack(data[0][1], times[x], data[0][3])
     new_plays = data[0][6]+1
     new_predict = int((times[x]-data[0][4])/data[0][6] + times[x])
     new_last_play = times[x]
@@ -74,24 +74,29 @@ def predict():
             pStr = time.strftime("%H:%M", time.localtime(x[2]))
             print(x[0],x[1],pStr)
             subprocess.call('sh ~/The-Beat-Predictor/slack.sh \"'+x[0]+'\" \"'+x[1]+'\" \"'+pStr+'\"', shell=True)
-            
+
 def insertIntoPlays(x):
     song_id = findIDBySongName(songs[x])
     sql = "INSERT INTO plays (song_id, song_time) VALUES ("+str(song_id)+", "+str(times[x])+");"
     cur.execute(sql)
     db.commit()
-            
+
+def outputToSlack(songName, playTime, predictTime):
+    playTime = time.strftime("%H:%M", time.localtime(playTime))
+    predictTime = time.strftime("%H:%M", time.localtime(predictTime))
+    subprocess.call('sh ~/The-Beat-Predictor/plays.sh \"'+songName+'\" \"'+playTime+'\" \"'+predictTime+'\"', shell=True)
+
 def findIDBySongName(name):
     cur.execute("SELECT id FROM songs WHERE song_name = \'"+name+"\';")
     data = cur.fetchall()
-    
+
     if data == ():
         print("Error: Song name not in songs table.")
         return 0
     else:
         return data[0][0]
-    
-    
+
+
 def main():
     formatData()
     cur.execute("SELECT song_name FROM songs;")
@@ -106,10 +111,10 @@ def main():
         timeLimit = data[0][0]
         for x in range(len(times)):
             if times[x]-timeLimit > 80000:
-                times[x] -= 86400    
+                times[x] -= 86400
     else:
         timeLimit = 0
-    
+
     print(timeLimit)
     for x in range(len(songs)):
         if songs[x] not in currSongs:
