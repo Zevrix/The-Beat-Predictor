@@ -49,13 +49,15 @@ def populate(x):
     sql = "INSERT INTO songs (song_artist, song_name, predict_time, first_play, last_play, plays) VALUES (\'"+artists[x]+"\',\'"+songs[x]+"\',0,"+str(times[x])+","+str(times[x])+",1);"
     cur.execute(sql)
     db.commit()
+    outputToSlack(songs[x], times[x], 0)
     insertIntoPlays(x)
 
 
 def update(x):
     cur.execute("SELECT * FROM songs WHERE song_name = \'"+songs[x]+"\';")
     data = cur.fetchall()
-    ouputToSlack(data[0][1], times[x], data[0][3])
+    print(data[0][1], times[x], data[0][3])
+    outputToSlack(data[0][1], times[x], data[0][3])
     new_plays = data[0][6]+1
     new_predict = int((times[x]-data[0][4])/data[0][6] + times[x])
     new_last_play = times[x]
@@ -83,7 +85,10 @@ def insertIntoPlays(x):
 
 def outputToSlack(songName, playTime, predictTime):
     playTime = time.strftime("%H:%M", time.localtime(playTime))
-    predictTime = time.strftime("%H:%M", time.localtime(predictTime))
+    if predictTime != 0:
+        predictTime = time.strftime("%H:%M", time.localtime(predictTime))
+    else:
+        predictTime = "NULL"
     subprocess.call('sh ~/The-Beat-Predictor/plays.sh \"'+songName+'\" \"'+playTime+'\" \"'+predictTime+'\"', shell=True)
 
 def findIDBySongName(name):
