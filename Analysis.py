@@ -9,7 +9,7 @@ name_list = []
 artist_list = []
 views_list = []
 release_list = []
-msm_list = [1000000]
+msm_list = [10000000]
 
 for line in lines:
     words = line.split("|")
