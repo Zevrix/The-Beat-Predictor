@@ -5,7 +5,6 @@ html = response.read()
 html = str(html)
 
 x = 1
-
 time_list = [1000000]
 minutes_list = [1000000]
 name_list = [1000000]
