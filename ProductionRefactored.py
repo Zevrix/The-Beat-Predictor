@@ -35,9 +35,7 @@ def convertToEpoch(timeStr):
     elif hour == "12" and timeStr[-2] == "A":
         hour = "00"
     now = datetime.datetime.now()
-    dateTime = str(now.day) + str(now.month) + str(now.year) + hour + minute
-    pattern = '%d%m%Y%H%M'
-    epoch = int(time.mktime(time.strptime(dateTime, pattern)))
+    epoch = datetime.datetime(now.year,now.month,now.day,int(hour),int(minute)).timestamp()
     return epoch
 
 
@@ -47,7 +45,6 @@ def formatData():
         artists[x] = artists[x].get_text().replace(
             '"', '\\"').replace("'", "\\'")
         times[x] = convertToEpoch(times[x].get_text())
-
 
 def populate(x):
     sql = "INSERT INTO songs (song_artist, song_name, predict_time, first_play, last_play, plays) VALUES (\'" + \
